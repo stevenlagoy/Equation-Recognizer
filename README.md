@@ -8,150 +8,46 @@ CS 59300: Application of Deep Learning, Fall 2026
 - Dalton Lybarger, lybads01@pfw.edu
 - Pranav Rao, raops01@pfw.edu
 
-## Project Overview
+## Overview
 
-We propose a deep learning-based application that extracts handwritten content from recorded lecture video and converts it into a machine-readable, accessible format. Rather than requiring a single clean image of a handwritten expression, the system accepts an entire lecture recording, identifies the whiteboard or blackboard within the frame, and reconstructs the board's content over time as it is written.
+A deep learning application that extracts handwritten content from recorded lecture video and converts it into an accessible, machine-readable format. The system accepts a full lecture recording, locates the whiteboard or blackboard within the frame, and reconstructs the board's content over time as it is written, including equations and prose. Output is exported as a Word document and a PDF and delivered through a Flask web application usable from a computer or a mobile device.
 
-The system samples and segments frames to separate the writing surface from the instructor and background, produces clean keyframes tagged with timestamps, and detects and groups handwritten content on those keyframes. That content, which may include equations and prose sentences, is classified and converted to text using deep learning methods, then reconstructed into a structured document. The final output is exported as a Microsoft Word document and a PDF, and delivered through a Flask web application usable from a computer or a mobile device.
-
-## Motivation
-
-Instructors frequently write equations, derivations, and explanatory notes on physical or digital whiteboards during recorded lectures. That content is valuable to students and to accessibility services, but it is locked inside video and is not searchable, copyable, or readily convertible into accessible formats such as screen-reader-friendly text.
-
-This project investigates whether a deep learning pipeline can reliably recover that written content directly from existing lecture recordings, without asking instructors to change how they teach or requiring students to scrub through video to find a moment on the board.
-
-## Stakeholders and Clients
-
-**Primary:** instructors and students who use recorded lectures. The tool must connect to existing classroom recording technology rather than requiring a new capture setup, since classroom cameras already capture the front of the room, including the writing surface. We are collecting feedback through a client survey of professors in the Math and Computer Science departments.
-
-**Secondary:** the university's Disability Access Center. Their interest is in assistive technology and compliance with ADA accessibility guidelines, and their involvement is meant to keep the output genuinely usable for accessibility workflows rather than only convenient.
-
-**Sponsor:** Dr. Chen, who is advising the project's focus on combining frame extraction with OCR and on producing ADA-compliant output.
-
-## Project Scope
-
-### Must-Have Functional Requirements
-
-- Accept video input of up to 150 minutes in length.
-- Detect and extract handwritten content from the video.
-- Recognize both mathematical equations and prose sentences.
-- Convert recognized content to text via OCR.
-- Implement and compare multiple deep learning methods for image-to-text conversion: a custom CNN, a pretrained OCR model, and a multimodal LLM.
-- Export the reconstructed content to Microsoft Word and PDF.
-- Provide a usable interface for non-technical users, requiring no command-line interaction.
-
-### Must-Have Non-Functional Requirements
-
-- A simple workflow that does not require the user to run any code directly.
-- Quantitative accuracy reporting, including accuracy, precision, recall, F1-score, confusion matrices, and word error rate (WER).
-- Processing time no greater than one times the runtime of the input video.
-- Attention to accessibility in the design of the output.
-- Documentation sufficient to reproduce our results.
-
-### Nice-to-Have Functional Requirements
-
-- Export to LaTeX (.tex).
-- Recognition of graphs and diagrams in addition to text and equations.
-- A screen-reader-optimized output format.
-- Timestamp-linked search within the recovered content.
-- Tolerance for camera motion and support for multiple video sources.
-
-### Nice-to-Have Non-Functional Requirements
-
-- An output retention policy, such as storing outputs for 30 days.
-- Maintainable code that supports future extension.
-- Scalability to longer or higher-resolution videos.
-
-## Deep Learning Approach
-
-The recognition pipeline consists of the following stages:
-
-- Sample frames from the input video and segment the whiteboard or blackboard from the instructor and background.
-- Produce clean keyframes tagged with timestamps, so that content is only considered once it is stable across multiple frames.
-- Detect and group handwritten content within each keyframe.
-- Classify and convert the grouped content into text using deep learning methods, including equations and prose sentences.
-- Reconstruct the recognized content into a structured text output, ordered and timestamped to match its appearance on the board.
-- Export the structured output to Word and PDF through the web application.
-
-A central part of the project is comparing deep learning approaches to this recognition step rather than committing to a single method up front. We plan to implement and evaluate at least a custom CNN-based classifier, a pretrained OCR model, and a multimodal LLM, using a modular pipeline design that allows each method to be swapped in and out for comparison.
-
-## System Evaluation
-
-### Recognition Accuracy
-
-- Accuracy, precision, recall, F1-score, and confusion matrices.
-- Comparison across the multiple deep learning methods under evaluation.
-
-### Content-Extraction Quality
-
-- Recall and precision of the board content recovered from video, as distinct from character-level recognition accuracy.
-- Handling of content that is only fully legible or complete across multiple frames.
-
-### End-to-End Performance
-
-- Processing time relative to input video length.
-- Responsiveness of timestamp-based search over the recovered content.
-
-### User Acceptance
-
-- Feedback from instructors, students, and Disability Access Center staff on the usability and usefulness of the output.
-
-## User Interface
-
-The application will be implemented as a Flask web application, usable from either a computer or a mobile device, so that a user can upload a lecture recording and receive a Word document and PDF without writing or running any code. The interface is intended to be simple enough for non-technical users, consistent with our non-functional usability requirement.
-
-## Requirements Gathering
-
-We refined our requirements through a formal requirements presentation, feedback from our sponsor Dr. Chen, and an ongoing client survey of Math and Computer Science faculty about their use of recorded lectures, how they currently reuse handwritten board content, and what accessible output would be most useful to them. We will continue to incorporate survey responses as they arrive.
-
-## Next Steps: Now to Midterm Review
-
-- End-to-end test: accept a video, sample frames, perform OCR on at least one keyframe, and export text, without the pipeline crashing.
-- Gather test footage from real or representative lecture recordings.
-- Fully evaluate one deep learning model on test footage, and begin evaluating a second model before the midterm review.
-- Establish a GitHub workflow, including branch organization, pull request reviews, and an even division of work across the team.
-- Build a UI shell for the web application.
-
-## Expected Outcome
-
-At the completion of the project, we expect to have a working Flask web application that accepts a lecture video and produces a timestamped, accessible reconstruction of its whiteboard content as a Word document and a PDF. Alongside the application itself, we expect to produce a clear, evaluated comparison of deep learning approaches to this recognition task, informed by feedback from instructors, students, and the Disability Access Center.
-
-
-
-
-
-
-
-
-
+For the full requirements, stakeholders, and system design, see [`docs/PROJECT-PROPOSAL.md`](docs/PROJECT-PROPOSAL.md).
 
 ## Pipeline
 
-1. Input a handwritten expression (image upload or in-app drawing).
-2. Preprocess the image (grayscale, resize, normalize, denoise).
-3. Segment the image into individual characters.
-4. Classify each character with a CNN.
-5. Determine character ordering.
-6. Reconstruct the full expression.
-7. Display the result as plain text and LaTeX.
+1. Accept an uploaded lecture video (up to 150 minutes).
+2. Sample frames and segment the whiteboard/blackboard from the rest of the scene.
+3. Reduce sampled frames to stable, timestamped keyframes.
+4. Recognize equations and prose on each keyframe with a swappable DL backend.
+5. Reconstruct recognized blocks into one ordered, timestamped document.
+6. Export the document to Word and PDF (LaTeX as a nice-to-have).
+7. Serve the whole flow through a Flask web app.
 
 ## Project Structure
 
 ```
-Equation-Recognizer/
-├── src/equation_recognizer/
-│   ├── data/            # Dataset loading and vocabulary definitions
-│   ├── preprocessing/   # Image preprocessing and segmentation
-│   ├── models/          # CNN architectures
-│   ├── inference/       # Expression reconstruction and LaTeX output
-│   └── utils/           # Shared helpers
-├── scripts/
-│   └── train.py         # Baseline training entry point
-├── tests/               # Unit tests
-├── notebooks/           # Exploratory notebooks
+whiteboard-content-extraction/
 ├── data/
-│   ├── raw/             # Untracked raw datasets
-│   └── processed/       # Untracked processed datasets
+│   ├── raw/                     # Untracked raw video and test footage
+│   └── processed/               # Untracked processed data
+├── docs/
+│   └── project-proposal.md
+├── scripts/
+│   ├── train.py                 # Train the custom CNN recognition backend
+│   ├── evaluate.py              # Run accuracy/precision/recall/F1/WER across DL methods
+│   └── benchmark.py             # Measure end-to-end processing time vs. video length
+├── src/
+│   └── whiteboard_extraction/
+│       ├── video/               # Frame sampling, board segmentation, keyframe extraction
+│       ├── recognition/         # Swappable DL backends: OCR, custom CNN, multimodal LLM
+│       ├── reconstruction/      # Assembling recognized blocks into one ordered document
+│       ├── export/              # Word, PDF, and LaTeX export
+│       ├── evaluation/          # Recognition metrics
+│       ├── web/                 # Flask app, templates, static assets
+│       ├── data/                # Dataset paths and loading
+│       └── utils/               # Shared helpers
+├── tests/
 ├── pyproject.toml
 ├── requirements.txt
 └── .gitignore
@@ -159,25 +55,78 @@ Equation-Recognizer/
 
 ## Setup
 
+**Linux / macOS**
 ```bash
 python -m venv .venv
-source .venv/bin/activate # Windows: .venv\Scripts\activate
+source .venv/bin/activate
 pip install -r requirements.txt
 pip install -e .
 ```
 
-Run tests:
+**Windows (cmd)**
+```cmd
+python -m venv .venv
+.venv\Scripts\activate.bat
+pip install -r requirements.txt
+pip install -e .
+```
+
+**Windows (PowerShell)**
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+pip install -e .
+```
+
+## Run the web app
+
+The simplest cross-platform option, once the virtual environment is active:
+
+```bash
+python src/whiteboard_extraction/web/app.py
+```
+
+Or use the Flask CLI:
+
+**Linux / macOS**
+```bash
+export FLASK_APP=src/whiteboard_extraction/web/app.py
+flask run
+```
+
+**Windows (cmd)**
+```cmd
+set FLASK_APP=src\whiteboard_extraction\web\app.py
+flask run
+```
+
+**Windows (PowerShell)**
+```powershell
+$env:FLASK_APP = "src\whiteboard_extraction\web\app.py"
+flask run
+```
+
+Visit `http://127.0.0.1:5000` in a browser to upload a video.
+
+## Run tests
+
+Same command on every platform, once the virtual environment is active:
 
 ```bash
 pytest
 ```
 
-Run the baseline training script (not yet implemented):
+## Run scripts
+
+Also the same across platforms:
 
 ```bash
 python scripts/train.py
+python scripts/evaluate.py
+python scripts/benchmark.py
 ```
 
 ## Status
 
-Initial project scaffolding. Character vocabulary, dataset selection, and the training pipeline are still to be finalized during requirements gathering (see project proposal).
+Core pipeline stages (video sampling, segmentation, recognition backends, reconstruction, export, and the Flask shell) are scaffolded but not yet implemented. See `docs/project-proposal.md` for current requirements and the task list leading up to the midterm review.
