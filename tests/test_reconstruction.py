@@ -1,4 +1,4 @@
-from equation_recognizer.inference.reconstruct import characters_to_expression, expression_to_latex
+from whiteboard_extraction.reconstruction.document import characters_to_expression, expression_to_latex
 
 def test_characters_to_expression():
     assert characters_to_expression(["2", "x", "+", "5", "=", "15"]) == "2x+5=15"

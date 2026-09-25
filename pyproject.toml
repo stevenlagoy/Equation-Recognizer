@@ -3,16 +3,15 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "equation-recognizer"
+name = "whiteboard-extraction"
 version = "0.1.0"
-description = "Handwritten Mathematical Expression Recognition"
+description = "Whiteboard Content Extraction"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
     { name = "Steven LaGoy", email = "lagosm01@pfw.edu" },
     { name = "Dalton Lybarger", email = "lybads01@pfw.edu" },
     { name = "Pranav Rao", email = "raops01@pfw.edu" },
-    { name = "Om Singhal", email = "singo01@pfw.edu" },
 ]
 dependencies = [
     "numpy",
